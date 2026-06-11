@@ -8,19 +8,19 @@ export function VerifyEmailView() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const token = searchParams.get("token")
-  const [status, setStatus] = useState<"verifying" | "success" | "error">("verifying")
-  const [message, setMessage] = useState("")
+  const [status, setStatus] = useState<"verifying" | "success" | "error">(
+    token ? "verifying" : "error",
+  )
+  const [message, setMessage] = useState(
+    token ? "" : "Missing verification token",
+  )
 
   useEffect(() => {
-    if (!token) {
-      setStatus("error")
-      setMessage("Missing verification token")
-      return
-    }
+    if (!token) return
 
     async function verify() {
       try {
-        const res = await fetch(`/api/auth/verify-email?token=${encodeURIComponent(token!)}`)
+        const res = await fetch(`/api/auth/verify-email?token=${encodeURIComponent(token)}`)
         if (res.ok) {
           setStatus("success")
           setMessage("Email verified successfully!")
